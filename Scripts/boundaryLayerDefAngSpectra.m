@@ -1,6 +1,6 @@
 %%
 clearvars;
-close all;
+closeALL;
 clc;
 
 %%
@@ -52,16 +52,23 @@ dx.heated_stitch.six.five   = (heated_stitch.x_ts.six.five(1, 2, 1) - heated_sti
 dx.heated_stitch.six.ten    = (heated_stitch.x_ts.six.ten(1, 2, 1) - heated_stitch.x_ts.six.ten(1, 1, 1)).*15.6e-3;
 dx.heated_stitch.six.twenty = (heated_stitch.x_ts.six.twenty(1, 2, 1) - heated_stitch.x_ts.six.twenty(1, 1, 1)).*15.6e-3;
 
+dy.heated_stitch.six.one    = (heated_stitch.y_ts.six.one(1, 2, 1) - heated_stitch.y_ts.six.one(1, 1, 1)).*15.6e-3;
+dy.heated_stitch.six.three  = (heated_stitch.y_ts.six.three(1, 2, 1) - heated_stitch.y_ts.six.three(1, 1, 1)).*15.6e-3;
+dy.heated_stitch.six.five   = (heated_stitch.y_ts.six.five(1, 2, 1) - heated_stitch.y_ts.six.five(1, 1, 1)).*15.6e-3;
+dy.heated_stitch.six.ten    = (heated_stitch.y_ts.six.ten(1, 2, 1) - heated_stitch.y_ts.six.ten(1, 1, 1)).*15.6e-3;
+dy.heated_stitch.six.twenty = (heated_stitch.y_ts.six.twenty(1, 2, 1) - heated_stitch.y_ts.six.twenty(1, 1, 1)).*15.6e-3;
+
 %
-[gradx.heated_stitch.six.one,    grady.heated_stitch.six.one]    = gradient(heated_stitch.WF_ts.six.one./1e6, dx.heated_stitch.six.one);
-[gradx.heated_stitch.six.three,  grady.heated_stitch.six.three]  = gradient(heated_stitch.WF_ts.six.three./1e6, dx.heated_stitch.six.three);
-[gradx.heated_stitch.six.five,   grady.heated_stitch.six.five]   = gradient(heated_stitch.WF_ts.six.five./1e6, dx.heated_stitch.six.five);
-[gradx.heated_stitch.six.ten,    grady.heated_stitch.six.ten]    = gradient(heated_stitch.WF_ts.six.ten./1e6, dx.heated_stitch.six.ten);
-[gradx.heated_stitch.six.twenty, grady.heated_stitch.six.twenty] = gradient(heated_stitch.WF_ts.six.twenty./1e6, dx.heated_stitch.six.twenty);
+[gradx.heated_stitch.six.one,    grady.heated_stitch.six.one]    = gradient(heated_stitch.WF_ts.six.one./1e6, dx.heated_stitch.six.one, dy.heated_stitch.six.one, 1);
+[gradx.heated_stitch.six.three,  grady.heated_stitch.six.three]  = gradient(heated_stitch.WF_ts.six.three./1e6, dx.heated_stitch.six.three, dy.heated_stitch.six.three,1);
+[gradx.heated_stitch.six.five,   grady.heated_stitch.six.five]   = gradient(heated_stitch.WF_ts.six.five./1e6, dx.heated_stitch.six.five, dy.heated_stitch.six.five, 1);
+[gradx.heated_stitch.six.ten,    grady.heated_stitch.six.ten]    = gradient(heated_stitch.WF_ts.six.ten./1e6, dx.heated_stitch.six.ten, dy.heated_stitch.six.ten, 1);
+[gradx.heated_stitch.six.twenty, grady.heated_stitch.six.twenty] = gradient(heated_stitch.WF_ts.six.twenty./1e6, dx.heated_stitch.six.twenty, dy.heated_stitch.six.twenty, 1);
+
 
 %
 fsamp = 97771;
-NN    = 100;
+NN    = 1000;
 [Sxx.heated_stitch.six.one,    freq.heated_stitch.six.one]    = psdfun(gradx.heated_stitch.six.one(50, 50, :),NN,fsamp);
 [Sxx.heated_stitch.six.three,  freq.heated_stitch.six.three]  = psdfun(gradx.heated_stitch.six.three(50, 50, :),NN,fsamp);
 [Sxx.heated_stitch.six.five,   freq.heated_stitch.six.five]   = psdfun(gradx.heated_stitch.six.five(50, 50, :),NN,fsamp);
@@ -69,6 +76,14 @@ NN    = 100;
 [Sxx.heated_stitch.six.twenty, freq.heated_stitch.six.twenty] = psdfun(gradx.heated_stitch.six.twenty(50, 50, :),NN,fsamp);
 
 %
+delta                        = 0.0156;
+Uc                           = 0.8*machToVel(0.2, 78);
+Std.heated_stitch.six.one    = (freq.heated_stitch.six.one.*delta)./Uc;
+Std.heated_stitch.six.three  = (freq.heated_stitch.six.one.*delta)./Uc;
+Std.heated_stitch.six.five   = (freq.heated_stitch.six.one.*delta)./Uc;
+Std.heated_stitch.six.ten    = (freq.heated_stitch.six.one.*delta)./Uc;
+Std.heated_stitch.six.twenty = (freq.heated_stitch.six.one.*delta)./Uc;
+
 figure();
 semilogy(freq.heated_stitch.six.one, Sxx.heated_stitch.six.one);
 hold on;
@@ -77,6 +92,16 @@ semilogy(freq.heated_stitch.six.five, Sxx.heated_stitch.six.five);
 semilogy(freq.heated_stitch.six.ten, Sxx.heated_stitch.six.ten);
 semilogy(freq.heated_stitch.six.twenty, Sxx.heated_stitch.six.twenty);
 
+legend('6-1', '6-3', '6-5', '6-10', '6-20');
+
+figure();
+loglog(Std.heated_stitch.six.one, Sxx.heated_stitch.six.one);
+hold on;
+loglog(Std.heated_stitch.six.three, Sxx.heated_stitch.six.three);
+loglog(Std.heated_stitch.six.five, Sxx.heated_stitch.six.five);
+loglog(Std.heated_stitch.six.ten, Sxx.heated_stitch.six.ten);
+loglog(Std.heated_stitch.six.twenty, Sxx.heated_stitch.six.twenty);
+xlabel('$St_{\delta}$', 'Interpreter','Latex');
 legend('6-1', '6-3', '6-5', '6-10', '6-20');
 
 %%

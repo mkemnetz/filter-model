@@ -1,6 +1,6 @@
 %%
 clearvars;
-close all;
+closeALL;
 clc;
 
 %%
@@ -39,6 +39,7 @@ h1 = semilogy(stitch.Ap, stitch.jitter, '--+', 'color',  c(1, :),'LineWidth', 1)
 hold on
 h2 = semilogy([0 stitch.Ap(1)], [3.423e-6 stitch.jitter(1)], '--+', 'color',  c(1, :), 'LineWidth', 1, 'MarkerSize', 8);
 h3 = semilogy(exp.Ap, exp.jitter, '--s','color',  c(2, :), 'LineWidth', 2);
+ylim([10^-9 10^-7]);
 h4 = semilogy([0 exp.Ap(1)], [4.5588e-6 exp.jitter(1)], '--s','color',  c(2, :),  'LineWidth', 1, 'MarkerSize', 8);
 h5 = semilogy(stitch_expdata.Ap.one, stitch_expdata.jitter.one, '--*','color',  c(3, :),  'LineWidth', 1, 'MarkerSize', 8);
 h6 = semilogy(stitch_expdata.Ap.two, stitch_expdata.jitter.two, '--o','color',  c(4, :),  'LineWidth', 1, 'MarkerSize', 8);
